@@ -2,6 +2,7 @@
 
 7-day weather forecast powered by LightGBM. The project collects historical weather from Open-Meteo, trains a single multi-output model, and serves predictions through a FastAPI backend with a bilingual web UI (Russian / English).
 
+![WhereVulniusAI forecast page](resources/img.png)
 ---
 
 ## Table of Contents
