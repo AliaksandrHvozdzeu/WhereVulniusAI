@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Forecast — 7 Days</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="/">
+        <span class="site-header__logo" aria-hidden="true">☁</span>
+        <span class="site-header__name">WhereVulniusAI</span>
+      </a>
+
+      <div class="site-header__actions">
+        <div class="lang-switch" role="group" aria-label="Language" data-active="ru">
+          <span class="lang-switch__indicator" aria-hidden="true"></span>
+          <button class="lang-switch__btn lang-switch__btn--active" type="button" data-lang="ru">
+            <span class="lang-switch__flag" aria-hidden="true">🇷🇺</span>
+            <span>Русский</span>
+          </button>
+          <button class="lang-switch__btn" type="button" data-lang="en">
+            <span class="lang-switch__flag" aria-hidden="true">🇬🇧</span>
+            <span>English</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <header class="page-header">
+      <div class="page-header__intro">
+        <p class="page-header__badge" data-i18n="forecastBadge">Weather forecast</p>
+        <h1 data-i18n="forecastTitle">7-Day Forecast</h1>
+        <p class="page-header__period" id="period">...</p>
+      </div>
+      <div class="page-header__meta">
+        <div class="meta-item">
+          <span data-i18n="lastKnownData">Latest data</span>
+          <strong id="last-known-date">—</strong>
+        </div>
+        <div class="meta-item">
+          <span data-i18n="model">Model</span>
+          <strong>LightGBM</strong>
+        </div>
+      </div>
+    </header>
+
+    <div id="loader" class="loader">
+      <div class="loader__spinner"></div>
+      <p data-i18n="buildingForecast">Building forecast...</p>
+    </div>
+
+    <div id="error" class="error hidden"></div>
+
+    <section id="day-tabs" class="day-tabs hidden"></section>
+    <section id="forecast-panel" class="forecast-panel hidden"></section>
+    <section id="week-overview" class="week-overview hidden"></section>
+  </main>
+
+  <template id="day-tab-template">
+    <button class="day-tab" type="button">
+      <span class="day-tab__weekday"></span>
+      <span class="day-tab__date"></span>
+      <span class="day-tab__icon"></span>
+    </button>
+  </template>
+
+  <template id="forecast-panel-template">
+    <article class="panel">
+      <div class="panel__hero">
+        <div class="panel__icon" aria-hidden="true"></div>
+        <div>
+          <p class="panel__weekday"></p>
+          <h2 class="panel__date"></h2>
+          <p class="panel__condition"></p>
+        </div>
+      </div>
+
+      <div class="panel__temperature">
+        <div class="panel__temp-main">
+          <span class="panel__temp-value"></span>
+          <span class="panel__temp-unit">°C</span>
+        </div>
+        <p class="panel__temp-caption" data-i18n="avgTemperature">average temperature</p>
+        <div class="panel__temp-range">
+          <div class="range-item range-item--min">
+            <span data-i18n="min">Min.</span>
+            <strong class="panel__temp-min"></strong>
+          </div>
+          <div class="range-bar" aria-hidden="true">
+            <span class="range-bar__marker"></span>
+          </div>
+          <div class="range-item range-item--max">
+            <span data-i18n="max">Max.</span>
+            <strong class="panel__temp-max"></strong>
+          </div>
+        </div>
+        <p class="panel__temp-legend" data-i18n="tempLegend">Colder on the left, warmer on the right</p>
+      </div>
+
+      <div class="quick-stats"></div>
+
+      <details class="details" open>
+        <summary data-i18n="detailedForecast">Detailed forecast</summary>
+        <div class="details__groups"></div>
+      </details>
+    </article>
+  </template>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
