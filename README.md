@@ -20,6 +20,8 @@
 
 ---
 
+
+
 ## How It Works
 
 ```mermaid
@@ -32,12 +34,16 @@ flowchart LR
     E --> F[static/ Web UI]
 ```
 
+
+
 1. **Collect** — `whether_collector.py` downloads hourly and daily weather history and saves a single Excel file.
 2. **Train** — `train.py` builds lag/rolling features, trains one `MultiOutputRegressor(LGBMRegressor)`, and saves the bundle to `model/weather_model.joblib`.
 3. **Predict** — on each API request, `get_forecast()` loads Excel + model, engineers features from the last 20 days, predicts 7 days ahead, and computes sunrise/sunset astronomically.
 4. **Serve** — `app.py` exposes REST endpoints; the frontend renders the forecast with RU/EN localization.
 
 ---
+
+
 
 ## Project Structure
 
@@ -61,44 +67,53 @@ WhereVulniusAI/
 │   ├── i18n.js             # Russian / English translations
 │   └── styles.css          # Styles
 │
-├── scripts/
-│   ├── deploy.ps1          # Deploy to server (PowerShell)
-│   ├── deploy.bat          # Deploy launcher (bypasses execution policy)
-│   └── deploy_remote.sh    # Remote setup: venv, systemd, restart
-│
 └── .cache.sqlite           # HTTP cache for Open-Meteo (created by collector)
 ```
 
+
+
 ### File Roles
 
-| File | Purpose |
-|------|---------|
+
+| File                   | Purpose                                                                                                                                             |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `whether_collector.py` | Fetches archive data from [Open-Meteo Archive API](https://archive-api.open-meteo.com/v1/archive). Writes `data/weather_data.xlsx` with two sheets. |
-| `forecast_service.py` | Shared module: merge daily/hourly data, feature engineering, training, inference, sun time calculation, JSON response builder. |
-| `train.py` | Entry point for training. Saves model and prints a 7-day CLI report. |
-| `app.py` | HTTP server: `/`, `/api/health`, `/api/forecast`. |
-| `static/i18n.js` | All user-facing text (RU/EN). Backend code stays in English. |
+| `forecast_service.py`  | Shared module: merge daily/hourly data, feature engineering, training, inference, sun time calculation, JSON response builder.                      |
+| `train.py`             | Entry point for training. Saves model and prints a 7-day CLI report.                                                                                |
+| `app.py`               | HTTP server: `/`, `/api/health`, `/api/forecast`.                                                                                                   |
+| `static/i18n.js`       | All user-facing text (RU/EN). Backend code stays in English.                                                                                        |
+
 
 ---
 
+
+
 ## Data Pipeline
+
+
 
 ### Source: Open-Meteo
 
 The dataset `data/weather_data.xlsx` is built from historical weather data provided by [Open-Meteo](https://open-meteo.com/) via the [Archive API](https://archive-api.open-meteo.com/v1/archive). Open-Meteo data is available under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) licence — attribution to Open-Meteo is required when using or redistributing the data.
 
-- **Website:** https://open-meteo.com/
+- **Website:** [https://open-meteo.com/](https://open-meteo.com/)
 - **API:** `https://archive-api.open-meteo.com/v1/archive`
 - **Collector script:** `whether_collector.py`
 - **Location (default):** 52.52°N, 13.41°E (Berlin)
 - **Date range:** configurable in `whether_collector.py` (`start_date` / `end_date`)
 
+
+
 ### Excel Format: `data/weather_data.xlsx`
 
-| Sheet | Columns | Description |
-|-------|---------|-------------|
-| `daily` | 20 params + `date` | Daily targets (temperature, precipitation, wind, etc.) |
-| `hourly` | 30 params + `date` | Hourly observations aggregated later as mean/max/min |
+
+| Sheet    | Columns            | Description                                            |
+| -------- | ------------------ | ------------------------------------------------------ |
+| `daily`  | 20 params + `date` | Daily targets (temperature, precipitation, wind, etc.) |
+| `hourly` | 30 params + `date` | Hourly observations aggregated later as mean/max/min   |
+
+
+
 
 ### Feature Merge (`load_merged_dataset`)
 
@@ -109,7 +124,11 @@ The dataset `data/weather_data.xlsx` is built from historical weather data provi
 
 ---
 
+
+
 ## Machine Learning
+
+
 
 ### Model
 
@@ -117,6 +136,8 @@ The dataset `data/weather_data.xlsx` is built from historical weather data provi
 - **Single file:** `model/weather_model.joblib`
 - **Outputs:** 17 parameters × 7 days = **119 predictions**
 - **Display:** 20 parameters × 7 days (sunrise, sunset, daylight are computed separately, not predicted)
+
+
 
 ### Targets (17 model outputs)
 
@@ -130,6 +151,8 @@ For each of 110 source columns:
 - Rolling: 7-day mean, 14-day mean, 7-day std (shifted by 1 day)
 - Seasonality: `month_sin/cos`, `day_of_year_sin/cos`
 
+
+
 ### Inference Flow (`get_forecast`)
 
 ```
@@ -142,6 +165,8 @@ weather_data.xlsx
     → apply_computed_sun_times() → astronomical sunrise/sunset
     → build_forecast_response() → JSON for API/UI
 ```
+
+
 
 ### Model Bundle Contents
 
@@ -159,15 +184,21 @@ weather_data.xlsx
 
 ---
 
+
+
 ## API
 
 Base URL (local): `http://127.0.0.1:8000`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/` | Forecast web page |
-| `GET` | `/api/health` | Server status + model file check |
-| `GET` | `/api/forecast` | 7-day forecast JSON |
+
+| Method | Path            | Description                      |
+| ------ | --------------- | -------------------------------- |
+| `GET`  | `/`             | Forecast web page                |
+| `GET`  | `/api/health`   | Server status + model file check |
+| `GET`  | `/api/forecast` | 7-day forecast JSON              |
+
+
+
 
 ### Example: `/api/health`
 
@@ -178,6 +209,8 @@ Base URL (local): `http://127.0.0.1:8000`
   "model_path": ".../model/weather_model.joblib"
 }
 ```
+
+
 
 ### Example: `/api/forecast` (fragment)
 
@@ -215,6 +248,8 @@ Labels and units are formatted on the frontend via `static/i18n.js`.
 
 ---
 
+
+
 ## Web UI
 
 - **Languages:** Russian / English (toggle in the top header)
@@ -224,11 +259,15 @@ Labels and units are formatted on the frontend via `static/i18n.js`.
 
 ---
 
+
+
 ## Requirements
 
 - Python **3.10+**
 - ~**2 GB RAM** recommended for inference (feature engineering on full Excel)
 - Internet for initial data collection (`whether_collector.py`)
+
+
 
 ### Python Packages
 
@@ -238,6 +277,8 @@ See `requirements.txt`:
 - **Data collection:** `openmeteo-requests`, `requests-cache`, `retry-requests`
 
 ---
+
+
 
 ## Installation
 
@@ -258,7 +299,11 @@ pip install -r requirements.txt
 
 ---
 
+
+
 ## Usage
+
+
 
 ### Step 1 — Collect weather data
 
@@ -282,7 +327,7 @@ Creates `model/weather_model.joblib` (~2–3 minutes depending on hardware).
 uvicorn app:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open: http://127.0.0.1:8000
+Open: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ### Serving without retraining
 
@@ -296,7 +341,11 @@ Run `whether_collector.py` periodically to refresh data. Retraining is optional 
 
 ---
 
+
+
 ## Configuration
+
+
 
 ### Change location
 
@@ -305,21 +354,30 @@ Edit `LOCATION` in `forecast_service.py` and coordinates in `whether_collector.p
 1. Re-run `whether_collector.py`
 2. Re-run `train.py`
 
+
+
 ### Key constants (`forecast_service.py`)
 
-| Constant | Default | Meaning |
-|----------|---------|---------|
-| `FORECAST_DAYS` | 7 | Days to predict |
-| `HISTORY_DAYS` | 20 | Days of history used for inference |
-| `DATA_PATH` | `data/weather_data.xlsx` | Dataset path |
-| `MODEL_PATH` | `model/weather_model.joblib` | Model path |
+
+| Constant        | Default                      | Meaning                            |
+| --------------- | ---------------------------- | ---------------------------------- |
+| `FORECAST_DAYS` | 7                            | Days to predict                    |
+| `HISTORY_DAYS`  | 20                           | Days of history used for inference |
+| `DATA_PATH`     | `data/weather_data.xlsx`     | Dataset path                       |
+| `MODEL_PATH`    | `model/weather_model.joblib` | Model path                         |
+
 
 ---
 
+
+
 ## Troubleshooting
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `Data file not found` | Missing Excel | Run `whether_collector.py` |
-| `Model not found` | Missing model | Run `train.py` |
+
+| Error                        | Cause                     | Fix                            |
+| ---------------------------- | ------------------------- | ------------------------------ |
+| `Data file not found`        | Missing Excel             | Run `whether_collector.py`     |
+| `Model not found`            | Missing model             | Run `train.py`                 |
 | `index 119 is out of bounds` | Model/API column mismatch | Retrain with `python train.py` |
+
+
