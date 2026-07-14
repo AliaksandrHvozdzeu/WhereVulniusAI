@@ -80,7 +80,11 @@ WhereVulniusAI/
 
 ### Source: Open-Meteo
 
+The dataset `data/weather_data.xlsx` is built from historical weather data provided by [Open-Meteo](https://open-meteo.com/) via the [Archive API](https://archive-api.open-meteo.com/v1/archive). Open-Meteo data is available under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) licence — attribution to Open-Meteo is required when using or redistributing the data.
+
+- **Website:** https://open-meteo.com/
 - **API:** `https://archive-api.open-meteo.com/v1/archive`
+- **Collector script:** `whether_collector.py`
 - **Location (default):** 52.52°N, 13.41°E (Berlin)
 - **Date range:** configurable in `whether_collector.py` (`start_date` / `end_date`)
 
