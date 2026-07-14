@@ -69,8 +69,8 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 
 url = "https://archive-api.open-meteo.com/v1/archive"
 params = {
-    "latitude": 52.52,
-    "longitude": 13.41,
+    "latitude": 54.6872,
+    "longitude": 25.2797,
     "start_date": "2016-07-12",
     "end_date": "2026-07-12",
     "daily": DAILY_VARS,

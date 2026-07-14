@@ -61,6 +61,11 @@ WhereVulniusAI/
 │   ├── i18n.js             # Russian / English translations
 │   └── styles.css          # Styles
 │
+├── scripts/
+│   ├── deploy.ps1          # Deploy to server (PowerShell)
+│   ├── deploy.bat          # Deploy launcher (bypasses execution policy)
+│   └── deploy_remote.sh    # Remote setup: venv, systemd, restart
+│
 └── .cache.sqlite           # HTTP cache for Open-Meteo (created by collector)
 ```
 

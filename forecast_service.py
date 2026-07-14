@@ -19,11 +19,11 @@ FORECAST_DAYS = 7
 HISTORY_DAYS = 20
 
 LOCATION = {
-    "name": "Berlin",
-    "region": "Germany",
-    "timezone": "Europe/Berlin",
-    "latitude": 52.52,
-    "longitude": 13.41,
+    "name": "Vilnius",
+    "region": "Lithuania",
+    "timezone": "Europe/Vilnius",
+    "latitude": 54.6872,
+    "longitude": 25.2797,
 }
 
 COMPUTED_SUN_COLUMNS = {"sunrise", "sunset", "daylight_duration"}

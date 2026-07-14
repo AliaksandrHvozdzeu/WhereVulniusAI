@@ -44,6 +44,7 @@ desktop.ini
 .env
 .env.*
 !.env.example
+scripts/deploy.secrets.ps1
 
 # Project data and artifacts (generated locally)
 data/*.xlsx
@@ -79,3 +80,4 @@ coverage.xml
 # Keep empty data/model directories in git
 !data/.gitkeep
 !model/.gitkeep
+/scripts/
